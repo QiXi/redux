@@ -1,8 +1,6 @@
 package ru.qixi.redux;
 
-
 import java.util.Map;
-
 
 public interface Action {
 

@@ -1,21 +1,22 @@
 package ru.qixi.redux;
 
-public abstract class Presenter<T> implements EventListener {
+public abstract class Presenter<V, State> implements StateChangeListener<State> {
 
-    protected T          view;
-    protected ReduxStore store;
+    protected V            view;
+    protected Store<State> store;
+    protected Cancelable   subscribe;
 
-    public Presenter(ReduxStore store) {
+    public Presenter(Store<State> store) {
         this.store = store;
     }
 
-    public void attachView(T view) {
+    public void attachView(V view) {
         this.view = view;
-        store.dispatcher.register(this);
+        subscribe = store.subscribe(this);
     }
 
     public void detachView() {
-        store.dispatcher.unregister(this);
+        subscribe.cancel();
     }
 
 }

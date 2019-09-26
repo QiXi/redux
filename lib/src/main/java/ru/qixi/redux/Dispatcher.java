@@ -1,17 +1,7 @@
 package ru.qixi.redux;
 
-public interface Dispatcher {
+public interface Dispatcher<T> {
 
-    void register(ActionListener callback);
-
-    void unregister(ActionListener callback);
-
-    void register(EventListener callback);
-
-    void unregister(EventListener callback);
-
-    void dispatch(Action action);
-
-    void emitChange(ReduxStore.StoreChangeEvent event);
+    void dispatch(T action);
 
 }

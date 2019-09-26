@@ -5,36 +5,36 @@ import android.text.TextUtils;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.qixi.redux.Dispatcher;
+import ru.qixi.redux.Cancelable;
+import ru.qixi.redux.HandlerDispatcher;
 import ru.qixi.redux.Presenter;
-import ru.qixi.redux.ReduxStore;
-import ru.qixi.redux.ViewModel;
+import ru.qixi.redux.Store;
 
 
-public class TodoPresenter extends Presenter<TodoView> {
+public class TodoPresenter extends Presenter<TodoView, TodoViewModel> {
 
-    private Dispatcher     dispatcher;
-    private ActionsCreator actionsCreator;
+    private HandlerDispatcher dispatcher;
+    private ActionsCreator    actionsCreator;
+    private Cancelable        subscribe;
 
-
-    TodoPresenter(Dispatcher dispatcher) {
-        super(new ReduxStore(dispatcher, new TodoReducer(), getStateList()));
+    TodoPresenter(HandlerDispatcher dispatcher) {
+        super(new Store(new TodoReducer(), getStateList()));
         this.dispatcher = dispatcher;
         this.actionsCreator = ActionsCreator.get(dispatcher);
     }
 
-    static Map<CharSequence, ViewModel> getStateList() {
-        Map<CharSequence, ViewModel> result = new HashMap<>();
+    static Map<CharSequence, TodoViewModel> getStateList() {
+        Map<CharSequence, TodoViewModel> result = new HashMap<>();
         result.put(TodoActions.CATEGORY, new TodoViewModel());
         return result;
     }
 
     @Override
-    public void handleEvent(ReduxStore.StoreChangeEvent event) {
-        String category = (String) event.getCategory();
+    public void onStateChanged(TodoViewModel state, CharSequence key) {
+        String category = (String) key;
         switch (category) {
             case TodoActions.CATEGORY:
-                TodoViewModel model = (TodoViewModel) store.getState(category);
+                TodoViewModel model = store.getState(category);
                 view.updateUI(model.getTodos());
                 if (model.canUndo()) {
                     view.showSnackbar("Element deleted");
@@ -44,11 +44,11 @@ public class TodoPresenter extends Presenter<TodoView> {
     }
 
     void onResume() {
-        dispatcher.register(store);
+        subscribe = dispatcher.subscribe(store);
     }
 
     void onPause() {
-        dispatcher.unregister(store);
+        subscribe.cancel();
     }
 
     void onClickCheckAll() {

@@ -7,47 +7,45 @@ import java.util.List;
 
 import ru.qixi.redux.Action;
 import ru.qixi.redux.Reducer;
-import ru.qixi.redux.ViewModel;
 
 
-public class TodoReducer implements Reducer {
+public class TodoReducer implements Reducer<TodoViewModel> {
 
     @Override
-    public ViewModel reduce(ViewModel viewModel, Action action) {
+    public TodoViewModel reduce(TodoViewModel viewModel, Action action) {
         long id;
         switch ((String) action.getType()) {
             case TodoActions.TODO_CREATE:
                 String text = ((String) action.getData().get(TodoActions.KEY_TEXT));
-                create((TodoViewModel) viewModel, text);
+                create(viewModel, text);
                 break;
 
             case TodoActions.TODO_DESTROY:
                 id = ((long) action.getData().get(TodoActions.KEY_ID));
-                destroy((TodoViewModel) viewModel, id);
+                destroy(viewModel, id);
                 break;
 
             case TodoActions.TODO_UNDO_DESTROY:
-                undoDestroy((TodoViewModel) viewModel);
+                undoDestroy(viewModel);
                 break;
 
             case TodoActions.TODO_COMPLETE:
                 id = ((long) action.getData().get(TodoActions.KEY_ID));
-                updateComplete((TodoViewModel) viewModel, id, true);
+                updateComplete(viewModel, id, true);
                 break;
 
             case TodoActions.TODO_UNDO_COMPLETE:
                 id = ((long) action.getData().get(TodoActions.KEY_ID));
-                updateComplete((TodoViewModel) viewModel, id, false);
+                updateComplete(viewModel, id, false);
                 break;
 
             case TodoActions.TODO_DESTROY_COMPLETED:
-                destroyCompleted((TodoViewModel) viewModel);
+                destroyCompleted(viewModel);
                 break;
 
             case TodoActions.TODO_TOGGLE_COMPLETE_ALL:
-                updateCompleteAll((TodoViewModel) viewModel);
+                updateCompleteAll(viewModel);
                 break;
-
         }
 
         return viewModel;//TOdO

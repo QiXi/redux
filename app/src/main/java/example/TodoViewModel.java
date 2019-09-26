@@ -4,10 +4,8 @@ package example;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.qixi.redux.ViewModel;
 
-
-class TodoViewModel implements ViewModel {
+class TodoViewModel {
 
     final List<TodoData> todos;
     TodoData lastDeleted;

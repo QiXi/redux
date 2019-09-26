@@ -1,8 +1,7 @@
 package ru.qixi.redux;
 
+public interface Reducer<State> {
 
-public interface Reducer {
-
-    ViewModel reduce(ViewModel viewModel, Action action);
+    State reduce(State state, Action action);
 
 }

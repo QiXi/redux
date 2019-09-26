@@ -8,16 +8,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+public class HandlerDispatcher implements Dispatcher<Action> {
 
-public class HandlerDispatcher implements Dispatcher {
-
-    private static final int               MSG_EVENT        = 9991;
-    private static final int               MSG_CHANGE_EVENT = 9992;
+    private static final int               MSG_EVENT = 9991;
     private static       HandlerDispatcher instance;
 
-    private Handler             handler    = new Handler(Looper.getMainLooper(), new IncomingHandlerCallback());
-    private Set<ActionListener> dispatcher = Collections.synchronizedSet(new HashSet<ActionListener>());
-    private Set<EventListener>  events     = Collections.synchronizedSet(new HashSet<EventListener>());
+    private Handler                 handler    = new Handler(Looper.getMainLooper(), new IncomingHandlerCallback());
+    private Set<Dispatcher<Action>> dispatcher = Collections.synchronizedSet(new HashSet<Dispatcher<Action>>());
 
     public static HandlerDispatcher get() {
         if (instance == null) {
@@ -30,44 +27,25 @@ public class HandlerDispatcher implements Dispatcher {
 
     }
 
-    public void register(ActionListener callback) {
-        dispatcher.add(callback);
-    }
-
-    public void unregister(ActionListener callback) {
-        dispatcher.remove(callback);
-    }
-
-    @Override
-    public void register(EventListener callback) {
-        events.add(callback);
-    }
-
-    @Override
-    public void unregister(EventListener callback) {
-        events.remove(callback);
-    }
-
     @Override
     public void dispatch(Action action) {
         Message msg = handler.obtainMessage(MSG_EVENT, action);
         handler.sendMessage(msg);
     }
 
-    public void emitChange(ReduxStore.StoreChangeEvent event) {
-        Message msg = handler.obtainMessage(MSG_CHANGE_EVENT, event);
-        handler.sendMessage(msg);
+    public Cancelable subscribe(final Dispatcher<Action> callback) {
+        dispatcher.add(callback);
+        return new Cancelable() {
+            @Override
+            public void cancel() {
+                dispatcher.remove(callback);
+            }
+        };
     }
 
     private void dispatchAction(Action action) {
-        for (ActionListener listener : dispatcher) {
-            listener.handleAction(action);
-        }
-    }
-
-    private void dispatchChangeEvent(ReduxStore.StoreChangeEvent event) {
-        for (EventListener listener : events) {
-            listener.handleEvent(event);
+        for (Dispatcher<Action> listener : dispatcher) {
+            listener.dispatch(action);
         }
     }
 
@@ -78,9 +56,6 @@ public class HandlerDispatcher implements Dispatcher {
             switch (pMessage.what) {
                 case MSG_EVENT:
                     dispatchAction((Action) pMessage.obj);
-                    break;
-                case MSG_CHANGE_EVENT:
-                    dispatchChangeEvent((ReduxStore.StoreChangeEvent) pMessage.obj);
                     break;
                 default:
                     break;
