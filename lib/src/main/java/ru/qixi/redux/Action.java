@@ -2,11 +2,12 @@ package ru.qixi.redux;
 
 import java.util.Map;
 
-public interface Action {
+
+public interface Action extends Payload {
 
     CharSequence getType();
 
-    CharSequence getCategory();
+    Payload getPayload();
 
     Map getData();
 

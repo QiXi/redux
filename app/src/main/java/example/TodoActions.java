@@ -13,6 +13,4 @@ public interface TodoActions {
     String KEY_TEXT = "key-text";
     String KEY_ID   = "key-id";
 
-
-    String CATEGORY = "TodoViewModel";
 }

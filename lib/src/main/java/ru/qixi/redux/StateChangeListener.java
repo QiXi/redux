@@ -1,7 +1,7 @@
 package ru.qixi.redux;
 
-public interface StateChangeListener<S> {
+public interface StateChangeListener<State> {
 
-    void onStateChanged(S event, CharSequence category);
+    void onStateChanged(State event, Payload payload);
 
 }

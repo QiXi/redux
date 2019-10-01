@@ -2,7 +2,6 @@ package ru.qixi.redux;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -10,15 +9,15 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
 
     final Reducer<State>           reducer;
     final Set<StateChangeListener> listeners = Collections.synchronizedSet(new HashSet<StateChangeListener>());
-    final Map<CharSequence, State> state;
+    final State                    state;
 
-    public Store(Reducer<State> reducer, Map<CharSequence, State> state) {
+    public Store(Reducer<State> reducer, State state) {
         this.reducer = reducer;
         this.state = state;
     }
 
-    public State getState(CharSequence key) {
-        return state.get(key);
+    public State getState() {
+        return state;
     }
 
     @Override
@@ -35,20 +34,19 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
     @Override
     public void dispatch(Action action) {
         State state = reduce(action);
-        emitStoreChange(state, action.getCategory());
+        emitStoreChange(state, action.getPayload());
     }
 
     private State reduce(Action action) {
-        State state = this.state.get(action.getCategory());
         if (state != null) {
             return reducer.reduce(state, action);
         }
         return null;
     }
 
-    private void emitStoreChange(State state, CharSequence category) {
+    private void emitStoreChange(State state, Payload payload) {
         for (StateChangeListener<State> listener : listeners) {
-            listener.onStateChanged(state, category);
+            listener.onStateChanged(state, payload);
         }
     }
 

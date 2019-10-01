@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class ParamAction implements Action {
 
+    private final int                 id;
     private final String              type;
-    private final String              category;
     private final Map<String, Object> data;
 
-    ParamAction(String type, String category, Map<String, Object> data) {
+    ParamAction(int id, String type, Map<String, Object> data) {
+        this.id = id;
         this.type = type;
-        this.category = category;
         this.data = data;
     }
 
@@ -22,13 +22,18 @@ public class ParamAction implements Action {
     }
 
     @Override
+    public int getId() {
+        return id;
+    }
+
+    @Override
     public String getType() {
         return type;
     }
 
     @Override
-    public String getCategory() {
-        return category;
+    public Payload getPayload() {
+        return null;
     }
 
     @Override
@@ -36,10 +41,26 @@ public class ParamAction implements Action {
         return data;
     }
 
+
+    @Override
+    public int getArg1() {
+        return 0;
+    }
+
+    @Override
+    public int getArg2() {
+        return 0;
+    }
+
+    @Override
+    public Object getObject() {
+        return type;
+    }
+
     public static class Builder {
 
+        private int                 id;
         private String              type;
-        private String              category;
         private Map<String, Object> data;
 
         Builder with(String type) {
@@ -47,6 +68,12 @@ public class ParamAction implements Action {
                 throw new IllegalArgumentException("Type may not be null.");
             }
             this.type = type;
+            this.data = new HashMap<>();
+            return this;
+        }
+
+        Builder with(int id) {
+            this.id = id;
             this.data = new HashMap<>();
             return this;
         }
@@ -63,16 +90,11 @@ public class ParamAction implements Action {
             return this;
         }
 
-        public Builder category(String category) {
-            this.category = category;
-            return this;
-        }
-
         public ParamAction build() {
             if (type == null || type.isEmpty()) {
                 throw new IllegalArgumentException("At least one key is required.");
             }
-            return new ParamAction(type, category, data);
+            return new ParamAction(id, type, data);
         }
     }
 

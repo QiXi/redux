@@ -2,11 +2,9 @@ package example;
 
 import android.text.TextUtils;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import ru.qixi.redux.Cancelable;
 import ru.qixi.redux.HandlerDispatcher;
+import ru.qixi.redux.Payload;
 import ru.qixi.redux.Presenter;
 import ru.qixi.redux.Store;
 
@@ -18,28 +16,20 @@ public class TodoPresenter extends Presenter<TodoView, TodoViewModel> {
     private Cancelable        subscribe;
 
     TodoPresenter(HandlerDispatcher dispatcher) {
-        super(new Store(new TodoReducer(), getStateList()));
+        super(new Store(new TodoReducer(), buildState()));
         this.dispatcher = dispatcher;
         this.actionsCreator = ActionsCreator.get(dispatcher);
     }
 
-    static Map<CharSequence, TodoViewModel> getStateList() {
-        Map<CharSequence, TodoViewModel> result = new HashMap<>();
-        result.put(TodoActions.CATEGORY, new TodoViewModel());
-        return result;
+    static TodoViewModel buildState() {
+        return new TodoViewModel();
     }
 
     @Override
-    public void onStateChanged(TodoViewModel state, CharSequence key) {
-        String category = (String) key;
-        switch (category) {
-            case TodoActions.CATEGORY:
-                TodoViewModel model = store.getState(category);
-                view.updateUI(model.getTodos());
-                if (model.canUndo()) {
-                    view.showSnackbar("Element deleted");
-                }
-                break;
+    public void onStateChanged(TodoViewModel state, Payload payload) {
+        view.updateUI(state.getTodos());
+        if (state.canUndo()) {
+            view.showSnackbar("Element deleted");
         }
     }
 

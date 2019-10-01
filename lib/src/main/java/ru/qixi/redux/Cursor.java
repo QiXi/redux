@@ -2,7 +2,7 @@ package ru.qixi.redux;
 
 public interface Cursor<State> {
 
-    State getState(CharSequence key);
+    State getState();
 
     Cancelable subscribe(StateChangeListener<State> listener);
 

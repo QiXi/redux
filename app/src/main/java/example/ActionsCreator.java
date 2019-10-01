@@ -29,7 +29,7 @@ class ActionsCreator {
             throw new IllegalArgumentException("Data must be a valid list of key,value pairs");
         }
 
-        ParamAction.Builder actionBuilder = ParamAction.type(type).category(TodoActions.CATEGORY);
+        ParamAction.Builder actionBuilder = ParamAction.type(type);
         int i = 0;
         while (i < data.length) {
             String key = (String) data[i++];
