@@ -1,14 +1,17 @@
 package example;
 
 
+import android.os.Bundle;
+
+import ru.qixi.redux.Action;
 import ru.qixi.redux.Dispatcher;
 import ru.qixi.redux.ParamAction;
 
 
 class ActionsCreator {
 
-    private static ActionsCreator instance;
-    final          Dispatcher     dispatcher;
+    private static ActionsCreator     instance;
+    final          Dispatcher<Action> dispatcher;
 
     ActionsCreator(Dispatcher dispatcher) {
         this.dispatcher = dispatcher;
@@ -21,22 +24,28 @@ class ActionsCreator {
         return instance;
     }
 
-    void dispatch(String type, Object... data) {
+    void dispatch(String type) {
+        dispatcher.dispatch(ParamAction.type(type));
+    }
+
+    void dispatch(String type, String key, String value) {
         if (isEmpty(type)) {
             throw new IllegalArgumentException("Type must not be empty");
         }
-        if (data.length % 2 != 0) {
-            throw new IllegalArgumentException("Data must be a valid list of key,value pairs");
-        }
+        Bundle params = new Bundle();
+        params.putString(ParamAction.ACTION_TYPE_KEY, type);
+        params.putString(key, value);
+        dispatcher.dispatch(new ParamAction(0, params));
+    }
 
-        ParamAction.Builder actionBuilder = ParamAction.type(type);
-        int i = 0;
-        while (i < data.length) {
-            String key = (String) data[i++];
-            Object value = data[i++];
-            actionBuilder.bundle(key, value);
+    void dispatch(String type, String key, long value) {
+        if (isEmpty(type)) {
+            throw new IllegalArgumentException("Type must not be empty");
         }
-        dispatcher.dispatch(actionBuilder.build());
+        Bundle params = new Bundle();
+        params.putString(ParamAction.ACTION_TYPE_KEY, type);
+        params.putLong(key, value);
+        dispatcher.dispatch(new ParamAction(0, params));
     }
 
     private boolean isEmpty(String type) {

@@ -1,24 +1,56 @@
 package ru.qixi.redux;
 
 
-import java.util.HashMap;
-import java.util.Map;
+import android.os.Bundle;
 
 
 public class ParamAction implements Action {
 
-    private final int                 id;
-    private final String              type;
-    private final Map<String, Object> data;
+    public static final String ACTION_TYPE_KEY = "type";
 
-    ParamAction(int id, String type, Map<String, Object> data) {
-        this.id = id;
-        this.type = type;
-        this.data = data;
+    public static final String PAYLOAD_ARG1_KEY   = "arg1";
+    public static final String PAYLOAD_ARG2_KEY   = "arg2";
+    public static final String PAYLOAD_OBJECT_KEY = "obj";
+
+    private final int     id;
+    private final Bundle  data;
+    private final Payload payload;
+
+
+    public static Action id(int id) {
+        return new ParamAction(id, null);
     }
 
-    public static Builder type(String type) {
-        return new Builder().with(type);
+    public static Action type(String type) {
+        Bundle params = new Bundle();
+        params.putString(ACTION_TYPE_KEY, type);
+        return new ParamAction(0, params);
+    }
+
+    public ParamAction(final int id, final Bundle data) {
+        this.id = id;
+        this.data = data;
+        this.payload = new Payload() {
+            @Override
+            public int getId() {
+                return id;
+            }
+
+            @Override
+            public int getArg1() {
+                return data.getInt(PAYLOAD_ARG1_KEY);
+            }
+
+            @Override
+            public int getArg2() {
+                return data.getInt(PAYLOAD_ARG2_KEY);
+            }
+
+            @Override
+            public Object getObject() {
+                return data.get(PAYLOAD_OBJECT_KEY);
+            }
+        };
     }
 
     @Override
@@ -28,74 +60,17 @@ public class ParamAction implements Action {
 
     @Override
     public String getType() {
-        return type;
+        return data.getString(ACTION_TYPE_KEY);
     }
 
     @Override
     public Payload getPayload() {
-        return null;
+        return payload;
     }
 
     @Override
-    public Map getData() {
+    public Bundle getData() {
         return data;
-    }
-
-
-    @Override
-    public int getArg1() {
-        return 0;
-    }
-
-    @Override
-    public int getArg2() {
-        return 0;
-    }
-
-    @Override
-    public Object getObject() {
-        return type;
-    }
-
-    public static class Builder {
-
-        private int                 id;
-        private String              type;
-        private Map<String, Object> data;
-
-        Builder with(String type) {
-            if (type == null) {
-                throw new IllegalArgumentException("Type may not be null.");
-            }
-            this.type = type;
-            this.data = new HashMap<>();
-            return this;
-        }
-
-        Builder with(int id) {
-            this.id = id;
-            this.data = new HashMap<>();
-            return this;
-        }
-
-        public Builder bundle(String key, Object value) {
-            if (key == null) {
-                throw new IllegalArgumentException("Key may not be null.");
-            }
-
-            if (value == null) {
-                throw new IllegalArgumentException("Value may not be null.");
-            }
-            data.put(key, value);
-            return this;
-        }
-
-        public ParamAction build() {
-            if (type == null || type.isEmpty()) {
-                throw new IllegalArgumentException("At least one key is required.");
-            }
-            return new ParamAction(id, type, data);
-        }
     }
 
 }

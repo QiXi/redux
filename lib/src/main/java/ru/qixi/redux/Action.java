@@ -1,14 +1,16 @@
 package ru.qixi.redux;
 
-import java.util.Map;
+import android.os.Bundle;
 
 
-public interface Action extends Payload {
+public interface Action {
+
+    int getId();
 
     CharSequence getType();
 
     Payload getPayload();
 
-    Map getData();
+    Bundle getData();
 
 }

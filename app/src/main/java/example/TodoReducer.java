@@ -16,12 +16,12 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         long id;
         switch ((String) action.getType()) {
             case TodoActions.TODO_CREATE:
-                String text = ((String) action.getData().get(TodoActions.KEY_TEXT));
+                String text = action.getData().getString(TodoActions.KEY_TEXT);
                 create(viewModel, text);
                 break;
 
             case TodoActions.TODO_DESTROY:
-                id = ((long) action.getData().get(TodoActions.KEY_ID));
+                id = action.getData().getLong(TodoActions.KEY_ID);
                 destroy(viewModel, id);
                 break;
 
@@ -30,12 +30,12 @@ public class TodoReducer implements Reducer<TodoViewModel> {
                 break;
 
             case TodoActions.TODO_COMPLETE:
-                id = ((long) action.getData().get(TodoActions.KEY_ID));
+                id = action.getData().getLong(TodoActions.KEY_ID);
                 updateComplete(viewModel, id, true);
                 break;
 
             case TodoActions.TODO_UNDO_COMPLETE:
-                id = ((long) action.getData().get(TodoActions.KEY_ID));
+                id = action.getData().getLong(TodoActions.KEY_ID);
                 updateComplete(viewModel, id, false);
                 break;
 
