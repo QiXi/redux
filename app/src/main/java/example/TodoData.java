@@ -1,6 +1,7 @@
 package example;
 
 public class TodoData implements Cloneable, Comparable<TodoData> {
+
     long    id;
     boolean complete;
     String  text;

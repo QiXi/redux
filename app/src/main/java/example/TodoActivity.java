@@ -39,24 +39,24 @@ public class TodoActivity extends AppCompatActivity implements TodoView {
 
     private void setupView() {
         presenter.attachView(this);
-        mainLayout = ((ViewGroup) findViewById(R.id.main_layout));
-        mainInput = (EditText) findViewById(R.id.main_input);
+        mainLayout = findViewById(R.id.main_layout);
+        mainInput = findViewById(R.id.main_input);
 
-        Button mainAdd = (Button) findViewById(R.id.main_add);
+        Button mainAdd = findViewById(R.id.main_add);
         mainAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 presenter.onClickAdd(getInputText());
             }
         });
-        mainCheck = (CheckBox) findViewById(R.id.main_checkbox);
+        mainCheck = findViewById(R.id.main_checkbox);
         mainCheck.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 presenter.onClickCheckAll();
             }
         });
-        Button mainClearCompleted = (Button) findViewById(R.id.main_clear_completed);
+        Button mainClearCompleted = findViewById(R.id.main_clear_completed);
         mainClearCompleted.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,7 +64,7 @@ public class TodoActivity extends AppCompatActivity implements TodoView {
             }
         });
 
-        recyclerView = (RecyclerView) findViewById(R.id.main_list);
+        recyclerView = findViewById(R.id.main_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(false);
         listAdapter = new TodoRecyclerAdapter(presenter.getActionsCreator());

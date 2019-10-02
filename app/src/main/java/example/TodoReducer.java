@@ -47,15 +47,12 @@ public class TodoReducer implements Reducer<TodoViewModel> {
                 updateCompleteAll(viewModel);
                 break;
         }
-
         return viewModel;//TOdO
     }
-
 
     private void addElement(List<TodoData> todos, TodoData clone) {
         todos.add(clone);
     }
-
 
     private void create(TodoViewModel model, String text) {
         long id = System.currentTimeMillis();
@@ -64,19 +61,17 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         Collections.sort(model.todos);
     }
 
-
     private void destroy(TodoViewModel model, long id) {
-        Iterator<TodoData> iter = model.todos.iterator();
-        while (iter.hasNext()) {
-            TodoData todo = iter.next();
+        Iterator<TodoData> it = model.todos.iterator();
+        while (it.hasNext()) {
+            TodoData todo = it.next();
             if (todo.getId() == id) {
                 model.lastDeleted = todo.clone();
-                iter.remove();
+                it.remove();
                 break;
             }
         }
     }
-
 
     private void undoDestroy(TodoViewModel model) {
         if (model.lastDeleted != null) {
@@ -86,7 +81,6 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         }
     }
 
-
     private void updateComplete(TodoViewModel model, long id, boolean complete) {
         TodoData todo = getById(model.todos, id);
         if (todo != null) {
@@ -94,11 +88,10 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         }
     }
 
-
     private TodoData getById(List<TodoData> list, long id) {
-        Iterator<TodoData> iter = list.iterator();
-        while (iter.hasNext()) {
-            TodoData todo = iter.next();
+        Iterator<TodoData> it = list.iterator();
+        while (it.hasNext()) {
+            TodoData todo = it.next();
             if (todo.getId() == id) {
                 return todo;
             }
@@ -106,17 +99,15 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         return null;
     }
 
-
     private void destroyCompleted(TodoViewModel model) {
-        Iterator<TodoData> iter = model.todos.iterator();
-        while (iter.hasNext()) {
-            TodoData todo = iter.next();
+        Iterator<TodoData> it = model.todos.iterator();
+        while (it.hasNext()) {
+            TodoData todo = it.next();
             if (todo.isComplete()) {
-                iter.remove();
+                it.remove();
             }
         }
     }
-
 
     private void updateCompleteAll(TodoViewModel model) {
         if (areAllComplete(model.todos)) {
@@ -126,7 +117,6 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         }
     }
 
-
     private boolean areAllComplete(List<TodoData> list) {
         for (TodoData todo : list) {
             if (!todo.isComplete()) {
@@ -135,7 +125,6 @@ public class TodoReducer implements Reducer<TodoViewModel> {
         }
         return true;
     }
-
 
     private void updateAllComplete(List<TodoData> list, boolean complete) {
         for (TodoData todo : list) {

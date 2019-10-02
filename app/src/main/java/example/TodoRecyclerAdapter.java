@@ -47,23 +47,23 @@ public class TodoRecyclerAdapter extends RecyclerView.Adapter<TodoRecyclerAdapte
         this.todos.addAll(items);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public TextView todoText;
-        public CheckBox todoCheck;
-        public Button   todoDelete;
+        TextView todoText;
+        CheckBox todoCheck;
+        Button   todoDelete;
 
         private ActionsCreator actionsCreator;
 
-        public ViewHolder(View view, ActionsCreator actionsCreator) {
+        ViewHolder(View view, ActionsCreator actionsCreator) {
             super(view);
             this.actionsCreator = actionsCreator;
-            todoText = (TextView) view.findViewById(R.id.row_text);
-            todoCheck = (CheckBox) view.findViewById(R.id.row_checkbox);
-            todoDelete = (Button) view.findViewById(R.id.row_delete);
+            this.todoText = view.findViewById(R.id.row_text);
+            this.todoCheck = view.findViewById(R.id.row_checkbox);
+            this.todoDelete = view.findViewById(R.id.row_delete);
         }
 
-        public void bindView(final TodoData todo) {
+        void bindView(final TodoData todo) {
             if (todo.isComplete()) {
                 SpannableString spanString = new SpannableString(todo.getText());
                 spanString.setSpan(new StrikethroughSpan(), 0, spanString.length(), 0);
@@ -88,4 +88,5 @@ public class TodoRecyclerAdapter extends RecyclerView.Adapter<TodoRecyclerAdapte
             });
         }
     }
+
 }
