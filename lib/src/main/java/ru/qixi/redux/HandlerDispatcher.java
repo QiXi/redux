@@ -13,8 +13,8 @@ public class HandlerDispatcher implements Dispatcher<Action> {
     private static final int               MSG_EVENT = 9991;
     private static       HandlerDispatcher instance;
 
-    private Handler                 handler    = new Handler(Looper.getMainLooper(), new IncomingHandlerCallback());
-    private Set<Dispatcher<Action>> dispatcher = Collections.synchronizedSet(new HashSet<Dispatcher<Action>>());
+    private Handler                 handler     = new Handler(Looper.getMainLooper(), new IncomingHandlerCallback());
+    private Set<Dispatcher<Action>> subscribers = Collections.synchronizedSet(new HashSet<Dispatcher<Action>>());
 
     public static HandlerDispatcher get() {
         if (instance == null) {
@@ -33,19 +33,19 @@ public class HandlerDispatcher implements Dispatcher<Action> {
         handler.sendMessage(msg);
     }
 
-    public Cancelable subscribe(final Dispatcher<Action> callback) {
-        dispatcher.add(callback);
+    public Cancelable subscribe(final Dispatcher<Action> subscriber) {
+        subscribers.add(subscriber);
         return new Cancelable() {
             @Override
             public void cancel() {
-                dispatcher.remove(callback);
+                subscribers.remove(subscriber);
             }
         };
     }
 
     private void dispatchAction(Action action) {
-        for (Dispatcher<Action> listener : dispatcher) {
-            listener.dispatch(action);
+        for (Dispatcher<Action> subscriber : subscribers) {
+            subscriber.dispatch(action);
         }
     }
 

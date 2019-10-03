@@ -8,7 +8,7 @@ import java.util.Set;
 public class Store<State> implements Cursor, Dispatcher<Action> {
 
     final Reducer<State>           reducer;
-    final Set<StateChangeListener> listeners = Collections.synchronizedSet(new HashSet<StateChangeListener>());
+    final Set<StateChangeListener> subscribers = Collections.synchronizedSet(new HashSet<StateChangeListener>());
     final State                    state;
 
     public Store(Reducer<State> reducer, State state) {
@@ -21,12 +21,12 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
     }
 
     @Override
-    public Cancelable subscribe(final StateChangeListener listener) {
-        listeners.add(listener);
+    public Cancelable subscribe(final StateChangeListener subscriber) {
+        subscribers.add(subscriber);
         return new Cancelable() {
             @Override
             public void cancel() {
-                listeners.remove(listener);
+                subscribers.remove(subscriber);
             }
         };
     }
@@ -45,8 +45,8 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
     }
 
     private void emitStoreChange(State state, Payload payload) {
-        for (StateChangeListener<State> listener : listeners) {
-            listener.onStateChanged(state, payload);
+        for (StateChangeListener<State> subscriber : subscribers) {
+            subscriber.onStateChanged(state, payload);
         }
     }
 

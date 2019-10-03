@@ -12,11 +12,11 @@ public abstract class Presenter<V, State> implements StateChangeListener<State> 
 
     public void attachView(V view) {
         this.view = view;
-        subscribe = store.subscribe(this);
+        this.subscribe = store.subscribe(this);
     }
 
     public void detachView() {
-        subscribe.cancel();
+        this.subscribe.cancel();
     }
 
 }
