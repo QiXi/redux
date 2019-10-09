@@ -23,7 +23,7 @@ public class HandlerDispatcher implements Dispatcher<Action> {
         return instance;
     }
 
-    HandlerDispatcher() {
+    public HandlerDispatcher() {
 
     }
 
