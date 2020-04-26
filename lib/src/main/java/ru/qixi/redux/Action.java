@@ -1,8 +1,5 @@
 package ru.qixi.redux;
 
-import android.os.Bundle;
-
-
 public interface Action {
 
     int getId();
@@ -11,6 +8,6 @@ public interface Action {
 
     Payload getPayload();
 
-    Bundle getData();
+    Object getData();
 
 }
