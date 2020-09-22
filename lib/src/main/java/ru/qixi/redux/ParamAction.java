@@ -1,34 +1,29 @@
 package ru.qixi.redux;
 
-
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class ParamAction implements Action {
 
-    public static final String ACTION_TYPE_KEY = "type";
-
-    public static final String PAYLOAD_ARG1_KEY   = "arg1";
-    public static final String PAYLOAD_ARG2_KEY   = "arg2";
+    public static final String ACTION_TYPE_KEY    = "type";
     public static final String PAYLOAD_OBJECT_KEY = "obj";
 
-    private final int     id;
-    private final Bundle  data;
-    private final Payload payload;
+    private final int                 id;
+    private final Map<String, Object> data;
+    private final Payload             payload;
 
-    public static Action id(final int id) {
+    public static Action id(int id) {
         return new ParamAction(id, null);
     }
 
-    public static Action type(final String type) {
-        Bundle params = new Bundle();
-        params.putString(ACTION_TYPE_KEY, type);
-        return new ParamAction(0, params);
+    public static Action object(int id, Object object) {
+        Map<String, Object> data = new HashMap<>();
+        data.put(PAYLOAD_OBJECT_KEY, object);
+        return new ParamAction(id, data);
     }
 
-    public ParamAction(final int id, final Bundle data) {
+    public ParamAction(final int id, final Map<String, Object> data) {
         this.id = id;
         this.data = data;
         this.payload = new Payload() {
@@ -39,12 +34,12 @@ public class ParamAction implements Action {
 
             @Override
             public int getArg1() {
-                return data.getInt(PAYLOAD_ARG1_KEY);
+                return (int) getParam(Payload.ARG1_KEY);
             }
 
             @Override
             public int getArg2() {
-                return data.getInt(PAYLOAD_ARG2_KEY);
+                return (int) getParam(Payload.ARG2_KEY);
             }
 
             @Override
@@ -60,8 +55,8 @@ public class ParamAction implements Action {
     }
 
     @Override
-    public String getType() {
-        return data.getString(ACTION_TYPE_KEY);
+    public CharSequence getType() {
+        return (CharSequence) getParam(ACTION_TYPE_KEY);
     }
 
     @Override
@@ -70,14 +65,21 @@ public class ParamAction implements Action {
     }
 
     @Override
-    public Bundle getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 
-    @NonNull
+    public Object getParam(CharSequence key) {
+        return (data != null) ? data.get(key) : null;
+    }
+
+    public Object getObject() {
+        return getParam(PAYLOAD_OBJECT_KEY);
+    }
+
     @Override
     public String toString() {
-        return String.format("{id:%d data:%s}", id, data);
+        return String.format("ParamAction{id:%d}", id);
     }
 
 }
