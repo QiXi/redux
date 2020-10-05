@@ -10,4 +10,6 @@ public interface Action {
 
     Object getData();
 
+    boolean useHandler();
+
 }

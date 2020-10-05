@@ -18,13 +18,9 @@ public class AsyncStore<State> extends Store<State> {
 
     @Override
     public void dispatch(Action action) {
-        Message msg = handler.obtainMessage(MSG_EVENT, action);
-        handler.sendMessage(msg);
-    }
-
-    public void dispatch(Action action, boolean useAsync) {
-        if (useAsync) {
-            dispatch(action);
+        if (action.useHandler()) {
+            Message msg = handler.obtainMessage(MSG_EVENT, action);
+            handler.sendMessage(msg);
         } else {
             super.dispatch(action);
         }
@@ -36,7 +32,7 @@ public class AsyncStore<State> extends Store<State> {
         public boolean handleMessage(Message pMessage) {
             switch (pMessage.what) {
                 case MSG_EVENT:
-                    dispatch((Action) pMessage.obj, false);
+                    AsyncStore.super.dispatch((Action) pMessage.obj);
                     break;
                 default:
                     break;

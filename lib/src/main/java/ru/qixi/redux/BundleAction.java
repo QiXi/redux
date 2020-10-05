@@ -70,6 +70,11 @@ public class BundleAction implements Action {
         return data;
     }
 
+    @Override
+    public boolean useHandler() {
+        return false;
+    }
+
     @NonNull
     @Override
     public String toString() {

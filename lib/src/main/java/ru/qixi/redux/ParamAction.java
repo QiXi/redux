@@ -6,8 +6,9 @@ import java.util.Map;
 
 public class ParamAction implements Action {
 
-    public static final String ACTION_TYPE_KEY    = "type";
-    public static final String PAYLOAD_OBJECT_KEY = "obj";
+    public static final String ACTION_TYPE_KEY     = "type";
+    public static final String PAYLOAD_OBJECT_KEY  = "obj";
+    public static final String PAYLOAD_HANDLER_KEY = "uh";
 
     private final int                 id;
     private final Map<String, Object> data;
@@ -18,8 +19,13 @@ public class ParamAction implements Action {
     }
 
     public static Action object(int id, Object object) {
+        return object(id, object, false);
+    }
+
+    public static Action object(int id, Object object, boolean useHandler) {
         Map<String, Object> data = new HashMap<>();
         data.put(PAYLOAD_OBJECT_KEY, object);
+        data.put(PAYLOAD_HANDLER_KEY, useHandler);
         return new ParamAction(id, data);
     }
 
@@ -44,7 +50,12 @@ public class ParamAction implements Action {
 
             @Override
             public Object getObject() {
-                return data.get(PAYLOAD_OBJECT_KEY);
+                return (data != null) ? data.get(PAYLOAD_OBJECT_KEY) : null;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("Payload{id:%d, obj:%s}", id, getObject());
             }
         };
     }
@@ -69,6 +80,12 @@ public class ParamAction implements Action {
         return data;
     }
 
+    @Override
+    public boolean useHandler() {
+        Object param = getParam(PAYLOAD_HANDLER_KEY);
+        return param != null && (boolean) param;
+    }
+
     public Object getParam(CharSequence key) {
         return (data != null) ? data.get(key) : null;
     }
@@ -79,7 +96,7 @@ public class ParamAction implements Action {
 
     @Override
     public String toString() {
-        return String.format("ParamAction{id:%d}", id);
+        return String.format("ParamAction{payload:%s}", payload);
     }
 
 }
