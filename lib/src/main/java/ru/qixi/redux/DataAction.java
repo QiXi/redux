@@ -60,6 +60,11 @@ public class DataAction implements Action {
             public Object getObject() {
                 return data.get(PAYLOAD_OBJECT_KEY);
             }
+
+            @Override
+            public Object getObject(String key) {
+                return data.get(key);
+            }
         };
     }
 

@@ -14,4 +14,6 @@ public interface Payload {
 
     Object getObject();
 
+    Object getObject(String key);
+
 }

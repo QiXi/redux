@@ -54,6 +54,11 @@ public class ParamAction implements Action {
             }
 
             @Override
+            public Object getObject(String key) {
+                return (data != null) ? data.get(key) : null;
+            }
+
+            @Override
             public String toString() {
                 return String.format("Payload{id:%d, obj:%s}", id, getObject());
             }

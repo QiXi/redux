@@ -47,6 +47,11 @@ public class BundleAction implements Action {
             public Object getObject() {
                 return data.get(Payload.OBJECT_KEY);
             }
+
+            @Override
+            public Object getObject(String key) {
+                return data.get(key);
+            }
         };
     }
 
