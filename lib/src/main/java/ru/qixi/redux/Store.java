@@ -32,6 +32,16 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
     }
 
     @Override
+    public void dispatch(int action) {
+        dispatch(DataAction.id(action));
+    }
+
+    @Override
+    public void dispatch(int action, Object payload) {
+        dispatch(DataAction.obj(action, payload));
+    }
+
+    @Override
     public void dispatch(Action action) {
         State state = reduce(action);
         emitStoreChange(state, action.getPayload());
