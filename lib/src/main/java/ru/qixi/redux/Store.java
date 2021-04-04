@@ -1,5 +1,7 @@
 package ru.qixi.redux;
 
+import android.util.Log;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -7,9 +9,11 @@ import java.util.Set;
 
 public class Store<State> implements Cursor, Dispatcher<Action> {
 
-    final Reducer<State>           reducer;
-    final Set<StateChangeListener> subscribers = Collections.synchronizedSet(new HashSet<StateChangeListener>());
-    final State                    state;
+    final           Reducer<State>           reducer;
+    final           Set<StateChangeListener> subscribers      = Collections.synchronizedSet(new HashSet<StateChangeListener>());
+    protected final Set<StateChangeListener> pendingAdditions = Collections.synchronizedSet(new HashSet<StateChangeListener>());
+    protected final Set<StateChangeListener> pendingRemovals  = Collections.synchronizedSet(new HashSet<StateChangeListener>());
+    final           State                    state;
 
     public Store(Reducer<State> reducer, State state) {
         this.reducer = reducer;
@@ -22,11 +26,11 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
 
     @Override
     public Cancelable subscribe(final StateChangeListener subscriber) {
-        subscribers.add(subscriber);
+        pendingAdditions.add(subscriber);
         return new Cancelable() {
             @Override
             public void cancel() {
-                subscribers.remove(subscriber);
+                pendingRemovals.add(subscriber);
             }
         };
     }
@@ -55,8 +59,23 @@ public class Store<State> implements Cursor, Dispatcher<Action> {
     }
 
     private void emitStoreChange(State state, Payload payload) {
+        commitUpdates();
         for (StateChangeListener<State> subscriber : subscribers) {
             subscriber.onStateChanged(state, payload);
+        }
+    }
+
+    public void commitUpdates() {
+        Log.d("Store",
+                String.format("commitUpdates subscribers=%d +%d -%d",
+                        subscribers.size(), pendingAdditions.size(), pendingRemovals.size()));
+        if (!pendingAdditions.isEmpty()) {
+            subscribers.addAll(pendingAdditions);
+            pendingAdditions.clear();
+        }
+        if (!pendingRemovals.isEmpty()) {
+            subscribers.removeAll(pendingRemovals);
+            pendingRemovals.clear();
         }
     }
 
