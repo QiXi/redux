@@ -28,6 +28,13 @@ public class DataAction implements Action {
         return new DataAction(id, params);
     }
 
+    public static Action def(final int id, final int arg1, final Object object) {
+        Map<String, Object> params = new HashMap<>();
+        params.put(PAYLOAD_ARG1_KEY, arg1);
+        params.put(PAYLOAD_OBJECT_KEY, object);
+        return new DataAction(id, params);
+    }
+
     public static Action def(final int id, final int type, final int arg1, final int arg2, final Object object) {
         Map<String, Object> params = new HashMap<>();
         params.put(ACTION_TYPE_KEY, type);
@@ -64,6 +71,12 @@ public class DataAction implements Action {
             @Override
             public Object getObject(String key) {
                 return data.get(key);
+            }
+
+            @NonNull
+            @Override
+            public String toString() {
+                return String.format("{id:%d data:%s}", id, data);
             }
         };
     }
